@@ -22,7 +22,7 @@ import javax.ws.rs.core.MediaType;
 import ejbs.calculation;
 
 @Stateless
-@Path("/calc")
+@Path("/")
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
 public class calculationService {
@@ -31,13 +31,9 @@ public class calculationService {
 
 	@PersistenceContext(unitName="CalcPU")
     private  EntityManager entityManager;
-//
-//	
-	
-	
 	
 	@POST
-	@Path("cal")
+	@Path("calc")
 	
 	public String addCalculation(calculation  c) {
 		
@@ -64,22 +60,18 @@ public class calculationService {
 //		return "test";
 //	}
 	 
-	 @GET
-	    @Path("calculations")
-	    public List<calculation> getAllCalculations() {
-	        try {
-	        	
-	            // Create a JPQL query to retrieve all calculations
-	            TypedQuery<calculation> query = entityManager.createQuery("SELECT c FROM calculation c", calculation.class);
-
-	            // Execute the query and return the list of calculations
-	            List<calculation> calculations = query.getResultList();
-	            return calculations;
-	        } catch (Exception e) {
-	            e.printStackTrace();
-	            // Return null or handle the error appropriately
-	            return null;
-	        }
-	        }
+	@GET
+    @Path("calculations")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response getAllCalculations() {
+        try {
+            TypedQuery<Calculation> query = entityManager.createQuery("SELECT c FROM Calculation c", Calculation.class);
+            List<Calculation> calculations = query.getResultList();
+            return Response.status(Response.Status.OK).entity(calculations).build();
+        } catch (Exception e) {
+            e.printStackTrace(); 
+            // Return error response with status 500 and error message
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(e.getMessage()).build();
+        }
 	
 }
